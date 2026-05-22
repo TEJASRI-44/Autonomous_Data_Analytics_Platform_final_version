@@ -80,7 +80,11 @@ if page == "Analyse Dataset":
     )
 
     if uploaded_file is not None:
-
+        
+        os.makedirs(
+            Settings.UPLOAD_DIR,
+            exist_ok=True
+        )
         file_path = (
             Settings.UPLOAD_DIR
             / uploaded_file.name
