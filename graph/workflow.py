@@ -174,6 +174,6 @@ workflow.add_edge(
 
 workflow.add_edge(
     "report_generation_agent",
-    "supervisor_agent"
+    END
 )
 graph = workflow.compile()

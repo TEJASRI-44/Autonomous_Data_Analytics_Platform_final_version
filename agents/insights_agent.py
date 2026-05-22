@@ -98,6 +98,12 @@ def insights_agent(state):
                 {}
             )
         )
+        previous_insights = (
+            state.get(
+                "previous_insights",
+                ""
+            )
+        )
 
         visualizations = (
             state.get(
@@ -138,14 +144,22 @@ def insights_agent(state):
         GENERATED VISUALIZATIONS:
         {visualization_summaries}
 
+        PREVIOUS INSIGHTS:
+        {previous_insights}
+
         HUMAN FEEDBACK:
         {human_feedback}
 
         IMPORTANT:
-        If human feedback is present,
-        carefully analyze the feedback
-        and prioritize generating
-        improved insights based on it.
+
+        If previous insights are available:
+
+        - retain all previous insights
+        - improve existing analysis
+        - append additional recommendations from human feedback
+        - enhance previous findings
+        - do not remove old insights
+        - generate a complete updated insights report
 
         Generate:
 

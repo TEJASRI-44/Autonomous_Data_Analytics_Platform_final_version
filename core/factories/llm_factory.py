@@ -4,34 +4,39 @@ from config.settings import (
     Settings
 )
 
+
 class LLMFactory:
 
     @staticmethod
     def get_tool_calling_llm():
 
-        return ChatGroq(
+        models = [
 
-            model_name=(
-                Settings
-                .TOOL_CALLING_MODEL
-            ),
+            Settings.TOOL_CALLING_MODEL,
 
-            temperature=(
-                Settings.TEMPERATURE
-            )
-        )
+            *Settings.FALLBACK_TOOL_MODELS
+        ]
 
-    @staticmethod
-    def get_reasoning_llm():
+        for model in models:
 
-        return ChatGroq(
+            try:
 
-            model_name=(
-                Settings
-                .REASONING_MODEL
-            ),
+                llm = ChatGroq(
 
-            temperature=(
-                Settings.TEMPERATURE
-            )
+                    model=model,
+
+                    temperature=
+                    Settings.TEMPERATURE
+                )
+
+                return llm
+
+            except Exception as e:
+
+                print(
+                    f"\nModel Failed: {model}"
+                )
+
+        raise Exception(
+            "All models failed."
         )

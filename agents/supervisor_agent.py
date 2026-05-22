@@ -120,32 +120,43 @@ def supervisor_router(state):
 
 
 
-    if not state.get(
-        "approval_status"
-    ):
+    approval_status = state.get(
+        "approval_status",
+        ""
+    )
 
-        print(
-            "\nRouting → Human Approval Agent"
-        )
+    current_agent = state.get(
+        "current_agent",
+        ""
+    )
 
-        return "human_approval_agent"
     if (
-        state.get(
-            "approval_status"
-        )
-        ==
-        "rejected"
+        state.get("insights")
+        and
+        approval_status != "approved"
     ):
 
+        if (
+            current_agent
+            !=
+            "human_approval_agent"
+        ):
+
+            print(
+                "\nRouting → Human Approval Agent"
+            )
+
+            return "human_approval_agent"
+
         print(
-            "\nRouting → Insights Agent"
+            "\nWaiting For Human Approval"
         )
 
         state[
-            "approval_status"
-        ] = ""
+            "workflow_complete"
+        ] = False
 
-        return "insights_agent"
+        return "end"
 
 
     if (

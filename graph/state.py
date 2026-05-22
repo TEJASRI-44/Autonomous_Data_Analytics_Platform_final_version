@@ -19,3 +19,4 @@ class AnalyticsState(TypedDict):
     report_path:str
     approval_status: str
     human_feedback: str
+    previous_insights: str

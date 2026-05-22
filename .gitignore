@@ -11,3 +11,4 @@ Miniconda3-latest-Linux-x86_64.sh
 vector_db/
 *.sqlite3
 *.bin
+analytics/

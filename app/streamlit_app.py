@@ -514,6 +514,18 @@ if page == "Analyse Dataset":
 
             st.session_state["workflow_result"] = result
 
+            if result.get(
+                "workflow_complete"
+            ):
+
+                st.session_state[
+                    "workflow_completed"
+                ] = True
+
+                st.session_state[
+                    "run_workflow"
+                ] = False
+
             st.session_state["report_path"] = (
                 final_report_path
             )
@@ -579,12 +591,22 @@ if page == "Analyse Dataset":
                 if st.button(
                     "Approve Insights"
                 ):
-                    # PART 2 — APPROVE BUTTON FINAL BEHAVIOR
-                    result["approval_status"] = "approved"
+
+                    result[
+                        "approval_status"
+                    ] = "approved"
+
+                    result[
+                        "current_agent"
+                    ] = ""
 
                     st.session_state[
                         "workflow_result"
                     ] = result
+
+                    st.session_state[
+                        "run_workflow"
+                    ] = True
 
                     st.rerun()
 
@@ -593,103 +615,48 @@ if page == "Analyse Dataset":
                 if st.button(
                     "Regenerate Insights"
                 ):
-                    # PART 2 — REGENERATE BUTTON FINAL BEHAVIOR
-                    result["approval_status"] = ""
 
-                    result["human_feedback"] = feedback
+                    current_insights = (
 
-                    result["insights"] = {}
+                        result.get(
+                            "insights",
+                            {}
+                        ).get(
+                            "insights_report",
+                            ""
+                        )
+                    )
+
+                    result[
+                        "previous_insights"
+                    ] = current_insights
+
+                    result[
+                        "insights"
+                    ] = {}
+
+                    result[
+                        "approval_status"
+                    ] = "rejected"
+
+                    result[
+                        "human_feedback"
+                    ] = feedback
+
+                    result[
+                        "current_agent"
+                    ] = ""
 
                     st.session_state[
                         "workflow_result"
                     ] = result
 
-                    st.rerun()
+                    st.session_state[
+                        "run_workflow"
+                    ] = True
 
+                    st.rerun()    
 
-        result = st.session_state.get(
-            "workflow_result"
-        )
-
-        if (
-            result
-            and
-            result.get(
-                "approval_status"
-            )
-            ==
-            "approved"
-            and
-            not st.session_state.get(
-                "workflow_completed"
-            )
-        ):
-            status = st.status(
-                "Generating Final Report...",
-                expanded=True
-            )
-
-            report_placeholder = st.empty()
-            final_report_path = ""
-
-            with status:
-                for event in (
-                    AnalyticsService
-                    .stream_workflow(
-                        result
-                    )
-                ):
-                    for (
-                        node_name,
-                        node_state
-                    ) in event.items():
-
-                        if (
-                            node_name
-                            ==
-                            "report_generation_agent"
-                        ):
-                            final_report_path = (
-                                node_state.get(
-                                    "report_path",
-                                    ""
-                                )
-                            )
-
-                            st.session_state[
-                                "report_path"
-                            ] = final_report_path
-
-                            st.session_state[
-                                "workflow_completed"
-                            ] = True
-
-                            st.session_state[
-                                "workflow_result"
-                            ] = node_state
-
-                            st.session_state[
-                                "run_workflow"
-                            ] = False
-
-                            report_placeholder.expander(
-                                "Final Analytics Report",
-                                expanded=False
-                            ).write(
-                                node_state.get(
-                                    "final_report",
-                                    ""
-                                )
-                            )
-
-            status.update(
-                label=(
-                    "Workflow Completed Successfully"
-                ),
-                state="complete"
-            )
-
-            st.rerun()
 
 
         result = st.session_state.get(
