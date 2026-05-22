@@ -783,27 +783,37 @@ elif page == "Analytics Chat":
 
 
 
-            with st.spinner(
-                "Copilot Thinking..."
-            ):
-                assistant_reply = (
-                    copilot_agent(
-                        user_query,
-                        st.session_state.messages
+            with st.chat_message("assistant"):
+
+                response_container = st.empty()
+
+                full_response = ""
+
+                for chunk in copilot_agent(
+
+                    user_query,
+
+                    st.session_state.messages
+                ):
+
+                    full_response = chunk
+
+                    response_container.markdown(
+                        full_response + "▌"
                     )
+
+                response_container.markdown(
+                    full_response
                 )
 
 
             st.session_state.messages.append(
+
                 {
                     "role": "assistant",
-                    "content": assistant_reply
+                    "content": full_response
                 }
             )
-
-
-            with st.chat_message("assistant"):
-                st.markdown(assistant_reply)
 
     else:
 

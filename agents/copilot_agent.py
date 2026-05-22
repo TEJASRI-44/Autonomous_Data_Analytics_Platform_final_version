@@ -43,6 +43,15 @@ prompt = ChatPromptTemplate.from_messages(
             - Keep explanations concise.
             - Explain analytics clearly.
             - Avoid hallucinations.
+            
+            FORMAT INSTRUCTIONS:
+
+            - Use proper headings
+            - Use bullet points
+            - Highlight important metrics
+            - Keep answers structured
+            - Use markdown formatting
+            - Keep answers conversational
             """
         ),
 
@@ -101,12 +110,30 @@ def copilot_agent(
     {user_query}
     """
 
-    result = chain.invoke(
+    full_response = ""
+
+    for chunk in chain.stream(
 
         {
             "input":
             final_input
         }
-    )
-    cleaned_results=clean_llm_output(result.content)
-    return cleaned_results
+
+    ):
+
+        if hasattr(
+            chunk,
+            "content"
+        ):
+
+            full_response += (
+                chunk.content
+            )
+
+            cleaned_response = (
+                clean_llm_output(
+                    full_response
+                )
+            )
+
+            yield cleaned_response
