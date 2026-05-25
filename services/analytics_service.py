@@ -15,16 +15,17 @@ class AnalyticsService:
         final_result = None
 
         for event in graph.stream(
-            initial_state
+            initial_state,
+            
+            config={
+
+                "recursion_limit": 25
+            }
         ):
 
             final_result = event
 
             yield event
-
-        # ----------------------------------------
-        # SAVE FINAL RESULT
-        # ----------------------------------------
 
         if final_result:
 
