@@ -288,7 +288,7 @@ if page == "Analyse Dataset":
             }
 
             status = st.status(
-                "Running Workflow...",
+                "Running Multi Agent Workflow...",
                 expanded=True
             )
 
@@ -328,7 +328,6 @@ if page == "Analyse Dataset":
                     ) in event.items():
 
                         result = node_state
-                        st.write("Runnning {node_name}")
 
                         if (
                             node_name
