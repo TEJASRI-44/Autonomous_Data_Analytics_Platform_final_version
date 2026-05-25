@@ -14,6 +14,10 @@ from langchain_core.prompts import (
     ChatPromptTemplate,
     MessagesPlaceholder
 )
+from core.utils.agent_executor_factory import (
+
+    invoke_agent_with_fallback
+)
 
 from tools.eda_tools import (
 
@@ -56,16 +60,8 @@ groq_api_key=os.getenv("GROQ_API_KEY")
 
 GLOBAL_DF = None
 from config.settings import Settings
-from core.factories.llm_factory import (
-    LLMFactory
-)
 
 
-
-llm = (
-    LLMFactory
-    .get_tool_calling_llm()
-)
 
 @tool
 def dataset_shape_tool(dummy: str = ""):
@@ -326,18 +322,7 @@ ns exist.
     ]
 )
 
-agent = create_tool_calling_agent(
-    llm=llm,
-    tools=tools,
-    prompt=prompt
-)
 
-agent_executor = AgentExecutor(
-    agent=agent,
-    tools=tools,
-    verbose=True,
-    handle_parsing_errors=True
-)
 
 
 def eda_agent(state):
@@ -362,8 +347,13 @@ def eda_agent(state):
             df.shape
         }
 
-        result = agent_executor.invoke(
-            {
+        result = invoke_agent_with_fallback(
+
+            tools=tools,
+
+            prompt=prompt,
+
+            input_data={
                 "input":
                 f"""
                 Perform exploratory data analysis
