@@ -52,3 +52,6 @@ class Settings:
     REPORT_DIR = (
         BASE_DIR / "reports"
     )
+    COPILOT_MODEL = (
+        "llama-3.1-8b-instant"
+    )

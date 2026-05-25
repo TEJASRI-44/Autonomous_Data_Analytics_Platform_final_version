@@ -68,11 +68,14 @@ page = st.sidebar.radio(
 )
 
 
+
+
 if page == "Analyse Dataset":
 
     st.subheader(
         "Multi-Agent Analytics Workflow"
     )
+    
 
     uploaded_file = st.file_uploader(
         "Upload Dataset",
@@ -285,7 +288,7 @@ if page == "Analyse Dataset":
             }
 
             status = st.status(
-                "Running Multi-Agent Workflow...",
+                "Running Workflow...",
                 expanded=True
             )
 
@@ -325,6 +328,7 @@ if page == "Analyse Dataset":
                     ) in event.items():
 
                         result = node_state
+                        st.write("Runnning {node_name}")
 
                         if (
                             node_name
@@ -681,10 +685,6 @@ if page == "Analyse Dataset":
                 st.success(
                     "No Errors Found"
                 )
-
-
-elif page == "Analytics Chat":
-
     if st.session_state.get(
         "workflow_completed"
     ):
@@ -716,10 +716,22 @@ elif page == "Analytics Chat":
                     mime="application/pdf"
                 )
 
+elif page == "Analytics Chat":
+
+    if st.session_state.get(
+        "workflow_completed"
+    ):
+
 
         st.header(
             "Analytics Copilot"
+
         )
+        if st.button(
+            "Clear Chat"
+        ):
+
+            st.session_state.messages = []
 
         for message in (
             st.session_state.messages
@@ -748,37 +760,30 @@ elif page == "Analytics Chat":
             with st.chat_message("user"):
                 st.markdown(user_query)
 
-
-
             with st.chat_message("assistant"):
 
-                response_container = st.empty()
+                response = st.write_stream(
 
-                full_response = ""
+                    copilot_agent(
 
-                for chunk in copilot_agent(
+                        user_query,
 
-                    user_query,
+                        st.session_state.messages,
 
-                    st.session_state.messages
-                ):
-
-                    full_response = chunk
-
-                    response_container.markdown(
-                        full_response + "▌"
+                        st.session_state.get(
+                            "workflow_result",
+                            {}
+                        ).get(
+                            "dataframe"
+                        )
                     )
-
-                response_container.markdown(
-                    full_response
                 )
-
 
             st.session_state.messages.append(
 
                 {
                     "role": "assistant",
-                    "content": full_response
+                    "content": response
                 }
             )
 
