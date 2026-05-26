@@ -123,11 +123,7 @@ result = evaluate(
 
         faithfulness,
 
-        answer_relevancy,
-        
-        context_precision,
-
-        context_recall
+        answer_relevancy
     ],
 
     llm=evaluator_llm,
