@@ -15,12 +15,10 @@ from config.settings import (
 
 
 def invoke_agent_with_fallback(
-
     tools,
-
     prompt,
-
-    input_data
+    input_data,
+    max_iterations
 ):
 
     models = [
@@ -66,13 +64,16 @@ def invoke_agent_with_fallback(
 
                 verbose=True,
 
-                handle_parsing_errors=True
+                handle_parsing_errors=True,
+                
+                max_iterations=max_iterations
+                 
             )
 
             result = agent_executor.invoke(
                 input_data
             )
-
+            print(max_iterations)
             print(
                 f"\nUsing Model: {model_name}"
             )

@@ -4,13 +4,12 @@ from langchain_groq import ChatGroq
 
 from langchain_core.tools import tool
 
-from langchain.agents import (
-    AgentExecutor,
-    create_tool_calling_agent
-)
-
 from langchain_core.prompts import (
     ChatPromptTemplate
+)
+from core.utils.agent_executor_factory import (
+
+    invoke_agent_with_fallback
 )
 
 from tools.statistical_tools import (
@@ -34,14 +33,6 @@ load_dotenv()
 GLOBAL_DF = None
 
 from config.settings import Settings
-from core.factories.llm_factory import (
-    LLMFactory
-)
-
-llm = (
-    LLMFactory
-    .get_tool_calling_llm()
-)
 
 
 @tool
@@ -120,8 +111,7 @@ def distribution_analysis_tool(dummy: str = ""):
 
 
 tools = [
-
-    strong_correlation_tool,
+ strong_correlation_tool,
 
     variance_analysis_tool,
 
@@ -197,18 +187,6 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-agent = create_tool_calling_agent(
-    llm=llm,
-    tools=tools,
-    prompt=prompt
-)
-
-agent_executor = AgentExecutor(
-    agent=agent,
-    tools=tools,
-    verbose=True,
-    handle_parsing_errors=True
-)
 
 def statistical_analysis_agent(state):
 
@@ -240,8 +218,11 @@ def statistical_analysis_agent(state):
             )
         }
 
-        result = agent_executor.invoke(
-            {
+        result = invoke_agent_with_fallback(
+            
+            tools=tools,
+            prompt=prompt,
+            input_data={
                 "input":
                 f"""
                 Perform statistical analysis
@@ -251,7 +232,8 @@ def statistical_analysis_agent(state):
 
                 {dataset_info}
                 """
-            }
+            },
+            max_iterations=6
         )
 
         state["statistical_results"] = {

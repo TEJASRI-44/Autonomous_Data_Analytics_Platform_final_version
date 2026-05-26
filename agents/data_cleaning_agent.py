@@ -1,17 +1,14 @@
 from dotenv import load_dotenv
 import os
 
-from langchain_groq import ChatGroq
-
 from langchain_core.tools import tool
-
-from langchain.agents import (
-    AgentExecutor,
-    create_tool_calling_agent
-)
 
 from langchain_core.prompts import (
     ChatPromptTemplate
+)
+from core.utils.agent_executor_factory import (
+
+    invoke_agent_with_fallback
 )
 
 from tools.data_cleaning_tools import (
@@ -25,32 +22,9 @@ from tools.data_cleaning_tools import (
     handle_outliers
 )
 
-load_dotenv()
-
-groq_api_key = os.getenv(
-    "GROQ_API_KEY"
-)
-
-
-
 GLOBAL_DF = None
-
-
-from core.factories.llm_factory import (
-    LLMFactory
-)
-
-
-llm = (
-    LLMFactory
-    .get_tool_calling_llm()
-)
-
-
 @tool
-def missing_value_cleaning_tool( columns: list = None,
-
-    dtypes: dict = None):
+def missing_value_cleaning_tool():
 
     """
     Handle missing values in dataset.
@@ -66,9 +40,7 @@ def missing_value_cleaning_tool( columns: list = None,
 
 
 @tool
-def duplicate_removal_tool( columns: list = None,
-
-    dtypes: dict = None):
+def duplicate_removal_tool():
 
     """
     Remove duplicate rows.
@@ -87,12 +59,7 @@ def duplicate_removal_tool( columns: list = None,
 
 
 @tool
-def datatype_fixing_tool(
-
-    columns: list = None,
-
-    dtypes: dict = None
-):
+def datatype_fixing_tool():
 
     """
     Fix dataframe datatypes.
@@ -108,9 +75,7 @@ def datatype_fixing_tool(
 
 
 @tool
-def outlier_handling_tool( columns: list = None,
-
-    dtypes: dict = None):
+def outlier_handling_tool():
 
     """
     Handle outliers in numerical columns.
@@ -123,8 +88,6 @@ def outlier_handling_tool( columns: list = None,
     )
 
     return "Outliers handled."
-
-
 
 tools = [
 
@@ -190,18 +153,7 @@ prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-agent = create_tool_calling_agent(
-    llm=llm,
-    tools=tools,
-    prompt=prompt
-)
 
-agent_executor = AgentExecutor(
-    agent=agent,
-    tools=tools,
-    verbose=True,
-    handle_parsing_errors=True
-)
 
 
 def data_cleaning_agent(state):
@@ -225,19 +177,26 @@ def data_cleaning_agent(state):
             )
         )
 
-        result = agent_executor.invoke(
-            {
-                "input":
-                f"""
-                Clean this dataset
-                intelligently using
-                the EDA findings.
+        result = invoke_agent_with_fallback(
+            
+                
+                tools=tools,
 
-                EDA RESULTS:
+                prompt=prompt,
+                
+                input_data={
+                    "input":
+                    f"""
+                    Clean this dataset
+                    intelligently using
+                    the EDA findings.
 
-                {eda_results}
-                """
-            }
+                    EDA RESULTS:
+
+                    {eda_results}
+                    """
+                },
+                max_iterations=5
         )
 
 

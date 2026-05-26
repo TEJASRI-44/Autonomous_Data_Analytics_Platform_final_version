@@ -1,8 +1,5 @@
 from dotenv import load_dotenv
 import os
-
-from langchain_groq import ChatGroq
-
 from langchain_core.tools import tool
 
 from langchain.agents import (
@@ -223,21 +220,37 @@ def memory_usage_tool(dummy: str = ""):
     return analyze_memory_usage(GLOBAL_DF)
 
 tools = [
+
     dataset_shape_tool,
+
     numerical_columns_tool,
+
     categorical_columns_tool,
+
     datetime_columns_tool,
+
     boolean_columns_tool,
+
     missing_values_tool,
+
     missing_percentage_tool,
+
     duplicate_rows_tool,
+
     summary_statistics_tool,
+
     correlation_matrix_tool,
+
     unique_values_tool,
+
     high_cardinality_tool,
+
     constant_columns_tool,
+
     skewness_tool,
+
     outlier_detection_tool,
+
     memory_usage_tool
 ]
 
@@ -252,7 +265,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             Your responsibility is to explore,
             understand,
-and analyze the dataset structure
+            and analyze the dataset structure
             and quality.
 
             IMPORTANT RESPONSIBILITIES:
@@ -290,7 +303,7 @@ and analyze the dataset structure
             - Do NOT remove duplicates.
             - Do NOT transform columns.
             - Do NOT perform feature engineering.
-ns exist.
+            ns exist.
             - Use skewness and outlier analysis
               only for meaningful numerical columns.
             - Use datetime analysis only if
@@ -363,7 +376,8 @@ def eda_agent(state):
 
                 {dataset_info}
                 """
-            }
+            },
+            max_iterations=8
         )
         dataset_shape = get_dataset_shape(df)
 

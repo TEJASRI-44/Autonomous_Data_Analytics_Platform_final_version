@@ -32,3 +32,4 @@ sentence-transformers==3.0.1
 huggingface-hub==0.24.6
 
 torch
+plotly
