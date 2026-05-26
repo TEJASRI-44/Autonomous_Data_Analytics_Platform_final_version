@@ -115,9 +115,11 @@ prompt = ChatPromptTemplate.from_messages(
             RESPONSE STYLE:
 
             - Keep answers concise.
+            -Do not show the sql queries performed internally.
             - Keep answers professional.
             - Use markdown formatting.
             - Use bullet points when needed.
+            -Do not show Dataset Filter:
             - Explain analytics clearly.
             - Answer conversationally.
             - Maintain chat continuity.
@@ -201,7 +203,7 @@ def copilot_agent(
         {dataframe.dtypes.to_dict()}
 
         RELEVANT DATASET ROWS:
-        {filtered_df.head(10).to_string(index=False)}
+        {dataframe.to_string(index=False)} 
         """
 
     final_input = f"""
