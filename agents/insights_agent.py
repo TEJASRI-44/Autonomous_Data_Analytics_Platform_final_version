@@ -153,6 +153,7 @@ def insights_agent(state):
         IMPORTANT:
 
         If previous insights are available:
+        Mainly focus more on human feedback and generate the insights accurately according to human feedback keeping previous insights context.
 
         - retain all previous insights
         - improve existing analysis

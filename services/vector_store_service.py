@@ -13,12 +13,21 @@ class VectorStoreService:
 
     @staticmethod
     def store_workflow_results(state):
-
+        
+       
         vector_store = (
             VectorRepository
             .get_vector_store()
         )
+        vector_store.delete_collection()
+        
+        vector_store = (
+            VectorRepository
+            .get_vector_store()
+        )
+        data = vector_store.get()
 
+        print(data)
         workflow_id = str(
             uuid.uuid4()
         )
@@ -157,6 +166,9 @@ class VectorStoreService:
         vector_store.add_documents(
             documents
         )
+        data = vector_store.get()
+
+        print(data)
 
         print(
             "\nWorkflow Results Stored In Vector DB"
