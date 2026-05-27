@@ -227,31 +227,13 @@ tools = [
 
     categorical_columns_tool,
 
-    datetime_columns_tool,
-
-    boolean_columns_tool,
-
     missing_values_tool,
-
-    missing_percentage_tool,
 
     duplicate_rows_tool,
 
     summary_statistics_tool,
 
-    correlation_matrix_tool,
-
-    unique_values_tool,
-
-    high_cardinality_tool,
-
-    constant_columns_tool,
-
-    skewness_tool,
-
     outlier_detection_tool,
-
-    memory_usage_tool
 ]
 
 prompt = ChatPromptTemplate.from_messages(
@@ -385,8 +367,6 @@ def eda_agent(state):
 
         categorical_columns = get_categorical_columns(df)
 
-        datetime_columns = get_datetime_columns(df)
-
         missing_values = analyze_missing_values(df)
 
         duplicate_rows = detect_duplicate_rows(df)
@@ -406,10 +386,7 @@ def eda_agent(state):
 
                 "categorical_columns":
                 categorical_columns,
-
-                "datetime_columns":
-                datetime_columns,
-
+                
                 "missing_values":
                 missing_values,
 

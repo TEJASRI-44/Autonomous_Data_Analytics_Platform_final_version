@@ -64,10 +64,7 @@ prompt = ChatPromptTemplate.from_messages(
 
             Suggest example questions like:
             - What are the key business insights?
-            - Which region performs best?
             - Give business recommendations.
-            - Which product has highest sales?
-            - Analyze sales trends.
 
             Keep greetings short and professional.
 
@@ -174,24 +171,25 @@ def copilot_agent(
         )
     )
 
-    formatted_history = ""
+    summary_prompt = f"""
 
-    recent_history = (
-        chat_history[-4:]
+    Summarize the following analytics conversation
+    briefly while preserving important business
+    context, analytics discussions, and user intent.
+
+    CHAT HISTORY:
+
+    {chat_history}
+    """
+    print(chat_history)
+    summary_response = llm.invoke(
+        summary_prompt
     )
-
-    for message in recent_history:
-
-        role = message["role"]
-
-        content = message["content"]
-
-        formatted_history += (
-
-            f"{role.upper()}: "
-            f"{content}\n"
-        )
-
+    
+    formatted_history = (
+        summary_response.content
+    )
+    print(formatted_history)
     dataset_context = ""
 
     if dataframe is not None:

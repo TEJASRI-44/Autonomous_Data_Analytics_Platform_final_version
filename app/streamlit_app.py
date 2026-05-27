@@ -286,7 +286,32 @@ if page == "Analyse Dataset":
                 "approval_status": "",
                 "human_feedback": "",
             }
+            agent_names = {
 
+                "data_ingestion_agent":
+                "Data Ingestion Agent",
+
+                "eda_agent":
+                "EDA Agent",
+
+                "data_cleaning_agent":
+                "Data Cleaning Agent",
+
+                "statistical_analysis_agent":
+                "Statistical Analysis Agent",
+
+                "visualization_agent":
+                "Visualization Agent",
+
+                "insights_agent":
+                "Insights Agent",
+
+                "human_approval_agent":
+                "Human Approval Agent",
+
+                "report_generation_agent":
+                "Report Generation Agent"
+            }
             status = st.status(
                 "Running Multi Agent Workflow...",
                 expanded=True
@@ -328,18 +353,27 @@ if page == "Analyse Dataset":
                     ) in event.items():
 
                         result = node_state
+                        
 
                         if (
                             node_name
                             ==
                             "data_ingestion_agent"
                         ):
+                            
+                            status.update(
+                                label=(
+                                    "EDA agent is running.."
+                                ),
+                                state="running"
+                            )
                             dataset_summary = (
                                 node_state.get(
                                     "dataset_summary",
                                     {}
                                 )
                             )
+                            
 
                             dataset_placeholder.expander(
                                 "Dataset Summary",
@@ -356,9 +390,15 @@ if page == "Analyse Dataset":
                             ==
                             "eda_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Data is getting cleaned"
+                                ),
+                                state="running"
+                            )
                             eda_placeholder.expander(
                                 "EDA Results",
-                                expanded=False
+                                expanded=True
                             ).write(
                                 node_state.get(
                                     "eda_results",
@@ -374,6 +414,12 @@ if page == "Analyse Dataset":
                             ==
                             "data_cleaning_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Statistical Analysis is Running"
+                                ),
+                                state="running"
+                            )
                             cleaning_results = (
                                 node_state.get(
                                     "cleaning_results",
@@ -383,7 +429,7 @@ if page == "Analyse Dataset":
 
                             cleaning_placeholder.expander(
                                 "Cleaning Results",
-                                expanded=False
+                                expanded=True
                             ).markdown(
                                 cleaning_results.get(
                                     "cleaning_report",
@@ -396,6 +442,12 @@ if page == "Analyse Dataset":
                             ==
                             "statistical_analysis_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Visualizations are getting generated"
+                                ),
+                                state="running"
+                            )
                             statistical_results = (
                                 node_state.get(
                                     "statistical_results",
@@ -405,7 +457,7 @@ if page == "Analyse Dataset":
 
                             stats_placeholder.expander(
                                 "Statistical Results",
-                                expanded=False
+                                expanded=True
                             ).markdown(
                                 statistical_results.get(
                                     "statistical_report",
@@ -418,6 +470,12 @@ if page == "Analyse Dataset":
                             ==
                             "visualization_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Insights are getting generated"
+                                ),
+                                state="running"
+                            )
                             visualizations = (
                                 node_state.get(
                                     "visualizations",
@@ -465,6 +523,12 @@ if page == "Analyse Dataset":
                             ==
                             "insights_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Waiting for human approval"
+                                ),
+                                state="running"
+                            )
                             insights_placeholder.expander(
                                 "Business Insights",
                                 expanded=True
@@ -488,6 +552,12 @@ if page == "Analyse Dataset":
                             ==
                             "report_generation_agent"
                         ):
+                            status.update(
+                                label=(
+                                    "Report is getting generated"
+                                ),
+                                state="running"
+                            )
                             final_report_path = (
                                 node_state.get(
                                     "report_path"
