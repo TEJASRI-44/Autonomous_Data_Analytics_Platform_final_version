@@ -830,7 +830,11 @@ elif page == "Analytics Chat":
                 st.markdown(user_query)
 
             with st.chat_message("assistant"):
+                thinking_placeholder = st.empty()
 
+                thinking_placeholder.markdown(
+                    "Copilot Thinking..."
+                )
                 response = st.write_stream(
 
                     copilot_agent(
@@ -847,6 +851,7 @@ elif page == "Analytics Chat":
                         )
                     )
                 )
+                thinking_placeholder.empty()
 
             st.session_state.messages.append(
 

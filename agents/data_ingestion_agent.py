@@ -1,5 +1,6 @@
 from tools.validation_tools import (
-    validate_dataset
+    validate_dataset,
+    validate_dataframe_structure
 )
 
 from tools.data_ingestion_tools import (
@@ -20,11 +21,17 @@ def data_ingestion_agent(state):
         )
 
         file_path = state["file_path"]
+
+
+
         validate_dataset(file_path)
+
         df = load_dataset(file_path)
+        validate_dataframe_structure(df)
 
 
         summary = generate_dataset_summary(df)
+
         summary_report = f"""
 
 ### Dataset Successfully Loaded
@@ -48,7 +55,6 @@ The dataset contains both numerical
 and categorical information suitable
 for analytics and visualization workflows.
 """
-
 
         state["dataframe"] = df
 
@@ -81,5 +87,7 @@ for analytics and visualization workflows.
         state["errors"].append(
             str(e)
         )
+
+        state["workflow_complete"] = True
 
         return state

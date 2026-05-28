@@ -171,24 +171,50 @@ def copilot_agent(
         )
     )
 
-    summary_prompt = f"""
+    formatted_history = ""
 
-    Summarize the following analytics conversation
-    briefly while preserving important business
-    context, analytics discussions, and user intent.
+    recent_history = chat_history[-4:]
 
-    CHAT HISTORY:
+    if len(chat_history) > 4:
 
-    {chat_history}
-    """
-    print(chat_history)
-    summary_response = llm.invoke(
-        summary_prompt
-    )
-    
-    formatted_history = (
-        summary_response.content
-    )
+        summary_prompt = f"""
+
+        Summarize the following analytics conversation
+        briefly while preserving:
+
+        - important business context
+        - analytical discussions
+        - user intent
+        - previous conclusions
+
+        CHAT HISTORY:
+
+        {chat_history[:-4]}
+        """
+
+        summary_response = llm.invoke(
+            summary_prompt
+        )
+
+        formatted_history += (
+
+            "CONVERSATION SUMMARY:\n"
+
+            f"{summary_response.content}\n\n"
+        )
+
+    for message in recent_history:
+
+        role = message["role"]
+
+        content = message["content"]
+
+        formatted_history += (
+
+            f"{role.upper()}:\n"
+            f"{content}\n\n"
+        )
+
     print(formatted_history)
     dataset_context = ""
 
