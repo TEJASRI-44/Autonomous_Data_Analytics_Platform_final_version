@@ -25,7 +25,10 @@ from config.settings import (
 from agents.copilot_agent import (
     copilot_agent
 )
-
+from core.utils.visualization_utils import (
+    generate_visualization,
+    should_generate_visualization
+)
 if "workflow_completed" not in st.session_state:
     st.session_state["workflow_completed"] = False
 
@@ -60,13 +63,14 @@ st.title(
 )
 
 page = st.sidebar.radio(
+
     "Navigation",
+
     [
         "Analyse Dataset",
         "Analytics Chat"
     ]
 )
-
 
 
 
